@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", function () {
   let currentUnit = "metric"; // Default unit is Celsius
   let apiKey = ""; // API key will be fetched from the backend
 
@@ -140,6 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
       fetchWeather(cityElement.textContent);
       fetchForecast(cityElement.textContent);
     }
+
   });
 
   // Initialize app
@@ -154,3 +155,21 @@ document.addEventListener("DOMContentLoaded", function () {
   fetchApiKey().then(init);
 });
 
+  
+    // Fetch API key and initialize the app
+    fetchApiKey().then(init);
+  });
+
+  });
+
+  // Initialize app
+  function init() {
+    updateDateTime();
+    setInterval(updateDateTime, 60000);
+    fetchWeather("Kigali");
+    fetchForecast("Kigali");
+  }
+
+  // Fetch API key and initialize the app
+  fetchApiKey().then(init);
+});
