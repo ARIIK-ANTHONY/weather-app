@@ -1,1 +1,27 @@
+# Node.js dependencies
+node_modules/
+
+# Logs
+*.log
+
+# Environment files (store API keys and config settings here)
 .env
+
+# API keys or configuration files (if any)
+api-key.json
+
+# Temporary files
+*.tmp
+*.swp
+
+# Build output folders (if you're using any build tools like Webpack or Babel)
+dist/
+build/
+
+# IDE-specific files (e.g., for VSCode, JetBrains, etc.)
+.vscode/
+.idea/
+
+# Operating system files (macOS/Windows/etc.)
+.DS_Store
+Thumbs.db
