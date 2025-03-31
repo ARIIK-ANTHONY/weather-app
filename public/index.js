@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", function () {
   let currentUnit = "metric"; // Default unit is Celsius
   let apiKey = ""; // API key will be fetched from the backend
 
@@ -140,6 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
       fetchWeather(cityElement.textContent);
       fetchForecast(cityElement.textContent);
     }
+
   });
 
   // Initialize app
@@ -153,3 +154,4 @@ document.addEventListener("DOMContentLoaded", function () {
   // Fetch API key and initialize the app
   fetchApiKey().then(init);
 });
+
