@@ -155,21 +155,3 @@
   fetchApiKey().then(init);
 });
 
-  
-    // Fetch API key and initialize the app
-    fetchApiKey().then(init);
-  });
-
-  });
-
-  // Initialize app
-  function init() {
-    updateDateTime();
-    setInterval(updateDateTime, 60000);
-    fetchWeather("Kigali");
-    fetchForecast("Kigali");
-  }
-
-  // Fetch API key and initialize the app
-  fetchApiKey().then(init);
-});
