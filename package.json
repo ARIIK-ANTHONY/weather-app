@@ -1,0 +1,27 @@
+{
+  "name": "weather-app-1",
+  "version": "1.0.0",
+  "description": "Let me break down and explain each of these errors in a clear way:",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ARIIK-ANTHONY/weather-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ARIIK-ANTHONY/weather-app/issues"
+  },
+  "homepage": "https://github.com/ARIIK-ANTHONY/weather-app#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "helmet": "^8.1.0"
+  }
+}
