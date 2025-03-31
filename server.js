@@ -1,35 +1,27 @@
-const express = require("express");
-const cors = require("cors");
-const helmet = require("helmet");
-require("dotenv").config();
-
+const express = require('express');
+const axios = require('axios');
+const cors = require('cors');  // To handle Cross-Origin Resource Sharing (CORS)
 const app = express();
-const PORT = process.env.PORT || 5000;
+const port = 4000;
 
-// Enable CORS and security headers
-app.use(cors());
-app.use(helmet());
+app.use(cors());  // Enable CORS for all routes
 
-// API Key Endpoint
-app.get("/api-key", (req, res) => {
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({ error: "API key not found in .env file" });
+// Replace with your OpenWeatherMap API key
+const apiKey = 'YOUR_API_KEY';
+
+app.get('/weather/:city', async (req, res) => {
+  const city = req.params.city;
+  try {
+    const weatherResponse = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`);
+    res.json(weatherResponse.data);  // Send weather data to the frontend
+  } catch (error) {
+    console.error('Error fetching weather data:', error);
+    res.status(500).json({ error: 'Error fetching weather data' });
   }
-  res.json({ apiKey });
-});
-
-// Health Check Endpoint
-app.get("/health", (req, res) => {
-  res.json({ status: "Server is running", timestamp: new Date() });
-});
-
-// 404 Handler
-app.use((req, res) => {
-  res.status(404).json({ error: "Endpoint not found" });
 });
 
 // Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
+
