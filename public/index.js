@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   let currentUnit = "metric"; // Default unit is Celsius
-  let apiKey = "4000e582a1e9aedbf25fa761f3b5ae95"; // API key will be fetched from the backend
+  let apiKey = ""; // API key will be fetched from the backend
 
   // DOM Elements
   const currentTimeElement = document.querySelector("#current-time");
@@ -74,6 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Fetch weather data
   function fetchWeather(city) {
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${currentUnit}&appid=${apiKey}`;
+    console.log("Weather API URL:", url); // Debugging
     axios
       .get(url)
       .then((response) => displayWeatherInfo(response.data))
@@ -86,6 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Fetch forecast data
   function fetchForecast(city) {
     const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=${currentUnit}&appid=${apiKey}`;
+    console.log("Forecast API URL:", url); // Debugging
     axios
       .get(url)
       .then((response) => displayForecast(response.data))
@@ -100,6 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((response) => response.json())
       .then((data) => {
         apiKey = data.apiKey;
+        console.log("Fetched API Key:", apiKey); // Debugging
         if (!apiKey) {
           throw new Error("API key is missing. Check your backend configuration.");
         }
