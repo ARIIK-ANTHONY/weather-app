@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const currentTempElement = document.querySelector("#current-temperature");
   const cityElement = document.querySelector("#searched-city");
   const weatherTypeElement = document.querySelector("#weather-type");
+  const weatherIconElement = document.querySelector("#weather-icon");
   const humidityElement = document.querySelector("#humidity");
   const windElement = document.querySelector("#wind");
   const feelsLikeElement = document.querySelector("#feels-like");
@@ -17,6 +18,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const celsiusLink = document.querySelector("#celcius-link");
   const fahrenheitLink = document.querySelector("#fahrenheit-link");
   const forecastContainer = document.querySelector(".week-forecast");
+  const loadingSpinner = document.querySelector("#loading-spinner");
+  const errorMessage = document.querySelector("#error-message");
 
   // Time and date formatting
   function formatTime(date) {
@@ -32,6 +35,17 @@ document.addEventListener("DOMContentLoaded", function () {
     return date.toLocaleDateString("en-US", { weekday: "short" });
   }
 
+  // Show/Hide Loading Spinner
+  function toggleLoading(show) {
+    loadingSpinner.style.display = show ? "block" : "none";
+  }
+
+  // Show/Hide Error Message
+  function toggleError(show, message = "Unable to fetch data. Please try again.") {
+    errorMessage.style.display = show ? "block" : "none";
+    errorMessage.textContent = message;
+  }
+
   // Update current time and day
   function updateDateTime() {
     const now = new Date();
@@ -41,9 +55,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Update weather data display
   function displayWeatherInfo(data) {
+    toggleError(false);
     cityElement.innerHTML = data.name;
     currentTempElement.innerHTML = `${Math.round(data.main.temp)}°`;
     weatherTypeElement.innerHTML = data.weather[0].main;
+    weatherIconElement.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
     humidityElement.innerHTML = `${data.main.humidity}%`;
     windElement.innerHTML = `${Math.round(data.wind.speed)} ${
       currentUnit === "metric" ? "km/h" : "mph"
@@ -54,15 +70,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Update 5-day forecast
   function displayForecast(data) {
+    toggleError(false);
     forecastContainer.innerHTML = "";
     const forecastData = data.list.filter((item, index) => index % 8 === 0).slice(0, 5);
     forecastData.forEach((forecast) => {
       const dayName = formatShortDay(forecast.dt);
       const weatherDescription = forecast.weather[0].main;
       const temperature = Math.round(forecast.main.temp);
+      const icon = forecast.weather[0].icon;
       const forecastHTML = `
         <div class="col">
           <h3>${dayName}</h3>
+          <img src="https://openweathermap.org/img/wn/${icon}@2x.png" alt="${weatherDescription}">
           <p>${weatherDescription}</p>
           <span>${temperature}°</span>
         </div>
@@ -73,23 +92,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Fetch weather data
   function fetchWeather(city) {
+    toggleLoading(true);
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${currentUnit}&appid=${apiKey}`;
     fetch(url)
       .then((response) => response.json())
-      .then((data) => displayWeatherInfo(data))
+      .then((data) => {
+        toggleLoading(false);
+        displayWeatherInfo(data);
+      })
       .catch((error) => {
-        alert("Error fetching weather data. Please try again.");
+        toggleLoading(false);
+        toggleError(true, "City not found. Please try again.");
       });
   }
 
   // Fetch forecast data
   function fetchForecast(city) {
+    toggleLoading(true);
     const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=${currentUnit}&appid=${apiKey}`;
     fetch(url)
       .then((response) => response.json())
-      .then((data) => displayForecast(data))
+      .then((data) => {
+        toggleLoading(false);
+        displayForecast(data);
+      })
       .catch((error) => {
-        alert("Error fetching forecast data. Please try again.");
+        toggleLoading(false);
+        toggleError(true, "Unable to fetch forecast data.");
       });
   }
 
@@ -104,7 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       })
       .catch((error) => {
-        alert("Failed to load API key. Please try again later.");
+        toggleError(true, "Failed to load API key. Please try again later.");
       });
   }
 

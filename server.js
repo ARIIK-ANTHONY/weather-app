@@ -20,12 +20,12 @@ app.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "https://unpkg.com", "'unsafe-inline'"], // Allow external scripts and inline scripts
-      styleSrc: ["'self'", "https://fonts.googleapis.com", "https://stackpath.bootstrapcdn.com", "'unsafe-inline'"], // Allow external stylesheets and inline styles
-      fontSrc: ["'self'", "https://fonts.gstatic.com"], // Allow external fonts
-      connectSrc: ["'self'", "https://oneariik.tech", "https://api.openweathermap.org"], // Allow API requests
-      imgSrc: ["'self'", "data:"], // Allow images and inline data URIs
-      objectSrc: ["'none'"], // Disallow <object>, <embed>, <applet>
+      scriptSrc: ["'self'", "https://unpkg.com", "'unsafe-inline'"], 
+      styleSrc: ["'self'", "https://fonts.googleapis.com", "https://stackpath.bootstrapcdn.com", "'unsafe-inline'"], 
+      fontSrc: ["'self'", "https://fonts.gstatic.com"], 
+      connectSrc: ["'self'", "https://oneariik.tech", "https://api.openweathermap.org"], 
+      imgSrc: ["'self'", "data:"], 
+      objectSrc: ["'none'"], 
     },
   })
 );
@@ -50,7 +50,7 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+// Start the server and bind it to all interfaces
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server is running on http://0.0.0.0:${PORT}`);
 });
