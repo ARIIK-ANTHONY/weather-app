@@ -41,7 +41,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Update weather data display
   function displayWeatherInfo(data) {
-    console.log("Weather Data:", data); // Debugging
     cityElement.innerHTML = data.name;
     currentTempElement.innerHTML = `${Math.round(data.main.temp)}°`;
     weatherTypeElement.innerHTML = data.weather[0].main;
@@ -55,7 +54,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Update 5-day forecast
   function displayForecast(data) {
-    console.log("Forecast Data:", data); // Debugging
     forecastContainer.innerHTML = "";
     const forecastData = data.list.filter((item, index) => index % 8 === 0).slice(0, 5);
     forecastData.forEach((forecast) => {
@@ -76,25 +74,22 @@ document.addEventListener("DOMContentLoaded", function () {
   // Fetch weather data
   function fetchWeather(city) {
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${currentUnit}&appid=${apiKey}`;
-    console.log("Weather API URL:", url); // Debugging
-    axios
-      .get(url)
-      .then((response) => displayWeatherInfo(response.data))
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => displayWeatherInfo(data))
       .catch((error) => {
-        console.error("Error fetching weather data:", error);
-        alert("City not found. Please try again.");
+        alert("Error fetching weather data. Please try again.");
       });
   }
 
   // Fetch forecast data
   function fetchForecast(city) {
     const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=${currentUnit}&appid=${apiKey}`;
-    console.log("Forecast API URL:", url); // Debugging
-    axios
-      .get(url)
-      .then((response) => displayForecast(response.data))
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => displayForecast(data))
       .catch((error) => {
-        console.error("Error fetching forecast data:", error);
+        alert("Error fetching forecast data. Please try again.");
       });
   }
 
@@ -104,13 +99,11 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((response) => response.json())
       .then((data) => {
         apiKey = data.apiKey;
-        console.log("Fetched API Key:", apiKey); // Debugging
         if (!apiKey) {
-          throw new Error("API key is missing. Check your backend configuration.");
+          throw new Error("API key is missing.");
         }
       })
       .catch((error) => {
-        console.error("Error fetching API key:", error);
         alert("Failed to load API key. Please try again later.");
       });
   }
