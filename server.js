@@ -5,7 +5,7 @@ const morgan = require("morgan");
 const path = require("path");
 require("dotenv").config();
 
-const app = express(); // Declare the app variable here
+const app = express();
 const PORT = process.env.PORT || 4000;
 
 // Validate environment variables
@@ -15,12 +15,13 @@ if (!process.env.API_KEY) {
 }
 
 // Enable CORS, security headers, and logging
+app.use(cors());
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "https://unpkg.com"], // Allow external scripts
-      styleSrc: ["'self'", "https://fonts.googleapis.com", "https://stackpath.bootstrapcdn.com", "'unsafe-inline'"], // Allow external stylesheets
+      scriptSrc: ["'self'", "https://unpkg.com", "'unsafe-inline'"], // Allow external scripts and inline scripts
+      styleSrc: ["'self'", "https://fonts.googleapis.com", "https://stackpath.bootstrapcdn.com", "'unsafe-inline'"], // Allow external stylesheets and inline styles
       fontSrc: ["'self'", "https://fonts.gstatic.com"], // Allow external fonts
       connectSrc: ["'self'", "https://oneariik.tech", "https://api.openweathermap.org"], // Allow API requests
       imgSrc: ["'self'", "data:"], // Allow images and inline data URIs

@@ -1,6 +1,6 @@
-  document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
   let currentUnit = "metric"; // Default unit is Celsius
-  let apiKey = ""; // API key will be fetched from the backend
+  let apiKey = "4000e582a1e9aedbf25fa761f3b5ae95"; // API key will be fetched from the backend
 
   // DOM Elements
   const currentTimeElement = document.querySelector("#current-time");
@@ -58,13 +58,11 @@
     const forecastData = data.list.filter((item, index) => index % 8 === 0).slice(0, 5);
     forecastData.forEach((forecast) => {
       const dayName = formatShortDay(forecast.dt);
-      const iconUrl = `https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`;
       const weatherDescription = forecast.weather[0].main;
       const temperature = Math.round(forecast.main.temp);
       const forecastHTML = `
         <div class="col">
           <h3>${dayName}</h3>
-          <img src="${iconUrl}" alt="${weatherDescription}" />
           <p>${weatherDescription}</p>
           <span>${temperature}°</span>
         </div>
@@ -98,8 +96,7 @@
 
   // Fetch API key from backend
   function fetchApiKey() {
-    // Update the URL here depending on your backend setup (HTTP or HTTPS)
-    return fetch("http://localhost:5000/api-key") // Use http:// or https:// depending on your backend
+    return fetch("/api-key")
       .then((response) => response.json())
       .then((data) => {
         apiKey = data.apiKey;
@@ -140,7 +137,6 @@
       fetchWeather(cityElement.textContent);
       fetchForecast(cityElement.textContent);
     }
-
   });
 
   // Initialize app
@@ -154,4 +150,3 @@
   // Fetch API key and initialize the app
   fetchApiKey().then(init);
 });
-
