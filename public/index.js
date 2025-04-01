@@ -41,6 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Update weather data display
   function displayWeatherInfo(data) {
+    console.log("Weather Data:", data); // Debugging
     cityElement.innerHTML = data.name;
     currentTempElement.innerHTML = `${Math.round(data.main.temp)}°`;
     weatherTypeElement.innerHTML = data.weather[0].main;
@@ -54,6 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Update 5-day forecast
   function displayForecast(data) {
+    console.log("Forecast Data:", data); // Debugging
     forecastContainer.innerHTML = "";
     const forecastData = data.list.filter((item, index) => index % 8 === 0).slice(0, 5);
     forecastData.forEach((forecast) => {
