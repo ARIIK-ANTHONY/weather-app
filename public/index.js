@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const currentTempElement = document.querySelector("#current-temperature");
   const cityElement = document.querySelector("#searched-city");
   const weatherTypeElement = document.querySelector("#weather-type");
-  const weatherIconElement = document.querySelector("#weather-icon");
   const humidityElement = document.querySelector("#humidity");
   const windElement = document.querySelector("#wind");
   const feelsLikeElement = document.querySelector("#feels-like");
@@ -18,76 +17,32 @@ document.addEventListener("DOMContentLoaded", function () {
   const celsiusLink = document.querySelector("#celcius-link");
   const fahrenheitLink = document.querySelector("#fahrenheit-link");
   const forecastContainer = document.querySelector(".week-forecast");
-  const loadingSpinner = document.querySelector("#loading-spinner");
+  const loadingIndicator = document.querySelector("#loading-indicator");
   const errorMessage = document.querySelector("#error-message");
 
-  // Time and date formatting
-  function formatTime(date) {
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  // Fetch API key from the backend
+  function fetchApiKey() {
+    return fetch("/api-key")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch API key");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        return data.apiKey;
+      })
+      .catch((error) => {
+        console.error("Error fetching API key:", error);
+        alert("Failed to load API key. Please try again later.");
+      });
   }
 
-  function formatDay(date) {
-    return date.toLocaleDateString("en-US", { weekday: "long" });
-  }
-
-  function formatShortDay(timestamp) {
-    const date = new Date(timestamp * 1000);
-    return date.toLocaleDateString("en-US", { weekday: "short" });
-  }
-
-  // Show/Hide Loading Spinner
+  // Toggle loading indicator visibility
   function toggleLoading(show) {
-    loadingSpinner.style.display = show ? "block" : "none";
-  }
-
-  // Show/Hide Error Message
-  function toggleError(show, message = "Unable to fetch data. Please try again.") {
-    errorMessage.style.display = show ? "block" : "none";
-    errorMessage.textContent = message;
-  }
-
-  // Update current time and day
-  function updateDateTime() {
-    const now = new Date();
-    currentTimeElement.innerHTML = formatTime(now);
-    currentDayElement.innerHTML = formatDay(now);
-  }
-
-  // Update weather data display
-  function displayWeatherInfo(data) {
-    toggleError(false);
-    cityElement.innerHTML = data.name;
-    currentTempElement.innerHTML = `${Math.round(data.main.temp)}°`;
-    weatherTypeElement.innerHTML = data.weather[0].main;
-    weatherIconElement.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
-    humidityElement.innerHTML = `${data.main.humidity}%`;
-    windElement.innerHTML = `${Math.round(data.wind.speed)} ${
-      currentUnit === "metric" ? "km/h" : "mph"
-    }`;
-    feelsLikeElement.innerHTML = `${Math.round(data.main.feels_like)}°`;
-    pressureElement.innerHTML = `${data.main.pressure} hPa`;
-  }
-
-  // Update 5-day forecast
-  function displayForecast(data) {
-    toggleError(false);
-    forecastContainer.innerHTML = "";
-    const forecastData = data.list.filter((item, index) => index % 8 === 0).slice(0, 5);
-    forecastData.forEach((forecast) => {
-      const dayName = formatShortDay(forecast.dt);
-      const weatherDescription = forecast.weather[0].main;
-      const temperature = Math.round(forecast.main.temp);
-      const icon = forecast.weather[0].icon;
-      const forecastHTML = `
-        <div class="col">
-          <h3>${dayName}</h3>
-          <img src="https://openweathermap.org/img/wn/${icon}@2x.png" alt="${weatherDescription}">
-          <p>${weatherDescription}</p>
-          <span>${temperature}°</span>
-        </div>
-      `;
-      forecastContainer.innerHTML += forecastHTML;
-    });
+    if (loadingIndicator) {
+      loadingIndicator.style.display = show ? "block" : "none";
+    }
   }
 
   // Fetch weather data
@@ -96,14 +51,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${currentUnit}&appid=${apiKey}`;
     fetch(url)
       .then((response) => response.json())
-      .then((data) => {
-        toggleLoading(false);
-        displayWeatherInfo(data);
-      })
+      .then((data) => displayWeatherInfo(data))
       .catch((error) => {
-        toggleLoading(false);
-        toggleError(true, "City not found. Please try again.");
-      });
+        console.error("Error fetching weather data:", error);
+        alert("City not found. Please try again.");
+      })
+      .finally(() => toggleLoading(false));
   }
 
   // Fetch forecast data
@@ -112,59 +65,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=${currentUnit}&appid=${apiKey}`;
     fetch(url)
       .then((response) => response.json())
-      .then((data) => {
-        toggleLoading(false);
-        displayForecast(data);
-      })
+      .then((data) => displayForecast(data))
       .catch((error) => {
-        toggleLoading(false);
-        toggleError(true, "Unable to fetch forecast data.");
-      });
-  }
-
-  // Fetch API key from backend
-  function fetchApiKey() {
-    return fetch("/api-key")
-      .then((response) => response.json())
-      .then((data) => {
-        apiKey = data.apiKey;
-        if (!apiKey) {
-          throw new Error("API key is missing.");
-        }
+        console.error("Error fetching forecast data:", error);
       })
-      .catch((error) => {
-        toggleError(true, "Failed to load API key. Please try again later.");
-      });
+      .finally(() => toggleLoading(false));
   }
-
-  // Event Listeners
-  searchForm.addEventListener("submit", function (event) {
-    event.preventDefault();
-    const city = searchInput.value.trim();
-    if (city) {
-      fetchWeather(city);
-      fetchForecast(city);
-      searchInput.value = "";
-    }
-  });
-
-  celsiusLink.addEventListener("click", function (event) {
-    event.preventDefault();
-    if (currentUnit !== "metric") {
-      currentUnit = "metric";
-      fetchWeather(cityElement.textContent);
-      fetchForecast(cityElement.textContent);
-    }
-  });
-
-  fahrenheitLink.addEventListener("click", function (event) {
-    event.preventDefault();
-    if (currentUnit !== "imperial") {
-      currentUnit = "imperial";
-      fetchWeather(cityElement.textContent);
-      fetchForecast(cityElement.textContent);
-    }
-  });
 
   // Initialize app
   function init() {
@@ -175,5 +81,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Fetch API key and initialize the app
-  fetchApiKey().then(init);
+  fetchApiKey().then((key) => {
+    apiKey = key; // Assign the fetched API key
+    init(); // Initialize the app
+  });
 });

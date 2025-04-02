@@ -20,12 +20,12 @@ app.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "https://unpkg.com", "'unsafe-inline'"], 
-      styleSrc: ["'self'", "https://fonts.googleapis.com", "https://stackpath.bootstrapcdn.com", "'unsafe-inline'"], 
-      fontSrc: ["'self'", "https://fonts.gstatic.com"], 
-      connectSrc: ["'self'", "https://oneariik.tech", "https://api.openweathermap.org"], 
-      imgSrc: ["'self'", "data:"], 
-      objectSrc: ["'none'"], 
+      scriptSrc: ["'self'", "https://unpkg.com", "'unsafe-inline'"],
+      styleSrc: ["'self'", "https://fonts.googleapis.com", "https://stackpath.bootstrapcdn.com", "'unsafe-inline'"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      connectSrc: ["'self'", "https://oneariik.tech", "https://api.openweathermap.org"],
+      imgSrc: ["'self'", "data:"],
+      objectSrc: ["'none'"],
     },
   })
 );
